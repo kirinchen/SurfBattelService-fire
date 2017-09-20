@@ -12,7 +12,8 @@ namespace RFNEet.firebase {
         public string roomId { get; private set; }
         private FireRepo repo = new FireRepo();
         private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
-        public void init(string rid) {
+        public void init(string rid,Action<bool> icb = null) {
+            addInitedAction(icb);
             roomId = rid;
             dependencyStatus = FirebaseApp.CheckDependencies();
             if (dependencyStatus != DependencyStatus.Available) {
