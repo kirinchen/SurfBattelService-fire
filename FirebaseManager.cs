@@ -10,9 +10,9 @@ namespace RFNEet.firebase {
 
         private static FirebaseManager instance;
         public string roomId { get; private set; }
-        private FireRepo repo = new FireRepo();
+        private FireRepo repo;
         private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
-        public void init(string rid,Action<bool> icb = null) {
+        public void init(string rid, Action<bool> icb = null) {
             addInitedAction(icb);
             roomId = rid;
             dependencyStatus = FirebaseApp.CheckDependencies();
@@ -39,6 +39,7 @@ namespace RFNEet.firebase {
             FirebaseApp app = FirebaseApp.DefaultInstance;
             app.SetEditorDatabaseUrl(FireConfig.getInstance().firebaseUrl);
             if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
+            repo = gameObject.AddComponent<FireRepo>();
             repo.initFire(roomId);
             doneInited(true);
 

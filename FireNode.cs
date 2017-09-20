@@ -19,7 +19,7 @@ namespace RFNEet.firebase {
 
         }
 
-        internal void post(object o) {
+        internal void post(RemoteData o) {
             string s = JsonConvert.SerializeObject(o);
             dataFire.SetRawJsonValueAsync(s);
         }
