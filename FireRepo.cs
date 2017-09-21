@@ -10,50 +10,40 @@ namespace RFNEet.firebase {
 
         public readonly string keyTag = "tag";
 
-        public class Map<T> : Dictionary<string, T> {
-
-            public T findThanSet(string k, T t) {
-                if (ContainsKey(k)) {
-                    return this[k];
-                } else {
-                    Add(k, t);
-                    return this[k];
-                }
-            }
-
-        }
+        public class MyMap<T> : Map<string, T> { }
 
         private DatabaseReference dataFire;
-        private Map<Map<FireNode>> map = new Map<Map<FireNode>>();
+        private MyMap<MyMap<FireNode>> map = new MyMap<MyMap<FireNode>>();
 
-        internal void initFire(string roomId) {
-            dataFire = FirebaseDatabase.DefaultInstance.GetReference("/data").Child(roomId);
-            Handler h = GetComponentInChildren<Handler>();
-            if (h == null) return;
+        internal void initFire(string roomId, Action initAct) {
+            dataFire = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
             dataFire.ValueChanged += (s, e) => {
+                Handler h = GetComponentInChildren<Handler>();
+                if (h == null) return;
                 foreach (DataSnapshot ds in e.Snapshot.Children) {
                     foreach (DataSnapshot dds in ds.Children) {
                         setupObject(ds.Key, dds, h);
                     }
                 }
+                initAct();
             };
         }
 
-        private void setupObject(string pid,DataSnapshot dds,Handler h) {
+        private void setupObject(string pid, DataSnapshot dds, Handler h) {
             string json = dds.GetRawJsonValue();
             RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(json);
             rd.setSource(json);
-            h.onDataInit( pid,dds.Key, rd);
-            
+            h.onDataInit(pid, dds.Key, rd);
+
         }
 
         internal FireNode get(string pid, string sid) {
-            Map<FireNode> fm = map.findThanSet(pid, new Map<FireNode>());
+            MyMap<FireNode> fm = map.findThanSet(pid, new MyMap<FireNode>());
             return fm.findThanSet(sid, new FireNode(pid, sid, dataFire));
         }
 
         public interface Handler {
-          
+
             void onDataInit(string pid, string oid, RemoteData v);
         }
 

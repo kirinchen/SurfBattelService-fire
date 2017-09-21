@@ -40,14 +40,17 @@ namespace RFNEet.firebase {
             app.SetEditorDatabaseUrl(FireConfig.getInstance().firebaseUrl);
             if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
             repo = gameObject.AddComponent<FireRepo>();
-            repo.initFire(roomId);
-            doneInited(true);
+            repo.initFire(roomId, () => {
+                doneInited(true);
+            });
 
         }
 
-        public FireRepo getRepo() {
-            return repo;
+        public static FireRepo getRepo() {
+            return getInstance().repo;
         }
+
+
 
         private void doneInited(bool b) {
             initedActions.ForEach(a => { a(b); });

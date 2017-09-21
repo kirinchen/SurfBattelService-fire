@@ -5,6 +5,7 @@ namespace RFNEet.firebase {
     public class FireConfig : MonoBehaviour {
         private static FireConfig instance;
         public string firebaseUrl = "https://apphi-224fb.firebaseio.com/";
+        public string rootNode = "/";
 
         public static FireConfig getInstance() {
             if (instance == null) {
