@@ -36,6 +36,7 @@ namespace RFNEet.firebase {
         private void addInitedAction(Action<bool> a) { initedActions.Add(a); }
 
         private void InitializeFirebase() {
+            Debug.Log("InitializeFirebase");
             FirebaseApp app = FirebaseApp.DefaultInstance;
             app.SetEditorDatabaseUrl(FireConfig.getInstance().firebaseUrl);
             if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);

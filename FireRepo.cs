@@ -19,10 +19,11 @@ namespace RFNEet.firebase {
             dataFire = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
             new ValueChangedListenerSetup(dataFire, true, (e) => {
                 Handler h = GetComponentInChildren<Handler>();
-                if (h == null) return;
-                foreach (DataSnapshot ds in e.Snapshot.Children) {
-                    foreach (DataSnapshot dds in ds.Children) {
-                        setupObject(ds.Key, dds, h);
+                if (h != null) {
+                    foreach (DataSnapshot ds in e.Snapshot.Children) {
+                        foreach (DataSnapshot dds in ds.Children) {
+                            setupObject(ds.Key, dds, h);
+                        }
                     }
                 }
                 initAct();
