@@ -17,7 +17,7 @@ namespace RFNEet.firebase {
 
         internal void initFire(string roomId, Action initAct) {
             dataFire = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
-            dataFire.ValueChanged += (s, e) => {
+            new ValueChangedListenerSetup(dataFire, true, (e) => {
                 Handler h = GetComponentInChildren<Handler>();
                 if (h == null) return;
                 foreach (DataSnapshot ds in e.Snapshot.Children) {
@@ -26,8 +26,10 @@ namespace RFNEet.firebase {
                     }
                 }
                 initAct();
-            };
+            });
         }
+
+
 
         private void setupObject(string pid, DataSnapshot dds, Handler h) {
             string json = dds.GetRawJsonValue();
