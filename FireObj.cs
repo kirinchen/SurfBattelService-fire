@@ -9,7 +9,8 @@ namespace RFNEet.firebase {
         public string pid;
         public string oid;
 
-        void initAtFire(FireObjCenter.InitBundle ib) {
+        void initAtFire(FireObjGener.InitBundle ib) {
+            Debug.Log("FireObj");
             node = ib.node;
             setData(ib.data);
             node.addValueChangedListener(onValueChnaged);
@@ -21,13 +22,17 @@ namespace RFNEet.firebase {
             onInit(data);
         }
 
-        public void init(string p,string o) {
+        public void init(string p, string o) {
             if (node != null) return;
             pid = p;
             oid = o;
             node = FirebaseManager.getRepo().get(pid, oid);
-            node.post(getCurrentData());
+            postData();
             node.addValueChangedListener(onValueChnaged);
+        }
+
+        public void postData() {
+            node.post(getCurrentData());
         }
 
         internal abstract RemoteData getCurrentData();

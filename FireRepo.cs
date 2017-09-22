@@ -10,44 +10,40 @@ namespace RFNEet.firebase {
 
         public readonly string keyTag = "tag";
 
-        public class MyMap<T> : Map<string, T> { }
 
-        private DatabaseReference dataFire;
-        private MyMap<MyMap<FireNode>> map = new MyMap<MyMap<FireNode>>();
+        public DatabaseReference dbRef { get; private set; }
+        private PlayerMap map;
+        public Handler handler { get; private set; }
 
         internal void initFire(string roomId, Action initAct) {
-            dataFire = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
-            new ValueChangedListenerSetup(dataFire, true, (e) => {
-                Handler h = GetComponentInChildren<Handler>();
-                if (h != null) {
-                    foreach (DataSnapshot ds in e.Snapshot.Children) {
-                        foreach (DataSnapshot dds in ds.Children) {
-                            setupObject(ds.Key, dds, h);
-                        }
-                    }
-                }
+            dbRef = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
+            handler = getHandler();
+            map = new PlayerMap();
+            new ValueChangedListenerSetup(dbRef, true, (e) => {
+                map.injectData(e.Snapshot);
                 initAct();
             });
-        }
-
-
-
-        private void setupObject(string pid, DataSnapshot dds, Handler h) {
-            string json = dds.GetRawJsonValue();
-            RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(json);
-            rd.setSource(json);
-            h.onDataInit(pid, dds.Key, rd);
 
         }
 
         internal FireNode get(string pid, string sid) {
-            MyMap<FireNode> fm = map.findThanSet(pid, new MyMap<FireNode>());
-            return fm.findThanSet(sid, new FireNode(pid, sid, dataFire));
+            return map.getThanSet(pid, sid);
         }
 
         public interface Handler {
 
-            void onDataInit(string pid, string oid, RemoteData v);
+            void onDataInit(string pid, string oid, FireNode fn, RemoteData v);
+        }
+
+        private Handler getHandler() {
+            Handler h = GetComponentInChildren<Handler>();
+            return h == null ? emth : h;
+        }
+
+        private Empty emth = new Empty();
+        public class Empty : Handler {
+            public void onDataInit(string pid, string oid, FireNode fn, RemoteData v) {
+            }
         }
 
 

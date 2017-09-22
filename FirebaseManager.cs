@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Firebase.Unity.Editor;
+using Firebase.Database;
 
 namespace RFNEet.firebase {
     public class FirebaseManager : MonoBehaviour {
@@ -33,7 +34,13 @@ namespace RFNEet.firebase {
         }
 
         private List<Action<bool>> initedActions = new List<Action<bool>>();
-        private void addInitedAction(Action<bool> a) { initedActions.Add(a); }
+        public void addInitedAction(Action<bool> a) {
+            if (initedActions == null) {
+                a(dependencyStatus == DependencyStatus.Available);
+            } else {
+                initedActions.Add(a);
+            }
+        }
 
         private void InitializeFirebase() {
             Debug.Log("InitializeFirebase");
@@ -49,6 +56,10 @@ namespace RFNEet.firebase {
 
         public static FireRepo getRepo() {
             return getInstance().repo;
+        }
+
+        internal static DatabaseReference getDBRef() {
+            return getRepo().dbRef;
         }
 
 
