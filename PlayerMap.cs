@@ -13,8 +13,8 @@ namespace RFNEet.firebase {
         }
 
 
-        internal override ObjMap genChild(string cn, DataSnapshot ds) {
-            ObjMap obj = new ObjMap(ds.Key);
+        internal override ObjMap genChild( DBResult ds) {
+            ObjMap obj = new ObjMap(ds.key());
             obj.injectData(ds);
             return obj;
         }

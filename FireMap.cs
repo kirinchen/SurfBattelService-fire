@@ -5,25 +5,25 @@ using UnityEngine;
 using System;
 
 namespace RFNEet.firebase {
-    public abstract class FireMap<T> : Map<string,T> {
-        private DatabaseReference dbRef;
-        public FireMap(DatabaseReference dbRef) {
+    public abstract class FireMap<T> : Map<string, T> {
+        private DBRefenece dbRef;
+        public FireMap(DBRefenece dbRef) {
             this.dbRef = dbRef;
         }
 
-        private void onChildAdded(object o , ChildChangedEventArgs ea) {
-            if (string.IsNullOrEmpty(ea.PreviousChildName)) return;
-            this.Add(ea.PreviousChildName, genChild(ea.PreviousChildName,ea.Snapshot));
+        private void onChildAdded(DBResult ea) {
+            if (this.ContainsKey(ea.key())) return;
+            this.Add(ea.key(), genChild(ea));
         }
 
-        internal void injectData(DataSnapshot snapshot) {
-            foreach (DataSnapshot ds in snapshot.Children) {
-                T t = genChild(ds.Key, ds);
+        internal void injectData(DBResult snapshot) {
+            foreach (DBResult ds in snapshot.children()) {
+                T t = genChild(ds);
             }
-            dbRef.ChildAdded += onChildAdded;
+            dbRef.childAdded += onChildAdded;
         }
 
 
-        internal abstract T genChild(string previousChildName, DataSnapshot snapshot);
+        internal abstract T genChild(DBResult snapshot);
     }
 }

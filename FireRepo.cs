@@ -11,16 +11,16 @@ namespace RFNEet.firebase {
         public readonly string keyTag = "tag";
 
 
-        public DatabaseReference dbRef { get; private set; }
+        public DBRefenece dbRef { get; private set; }
         private PlayerMap map;
         public Handler handler { get; private set; }
 
-        internal void initFire(string roomId, Action initAct) {
-            dbRef = FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId);
+        internal void initFire(DBRefenece df, Action initAct) {
+            dbRef = df;
             handler = getHandler();
             map = new PlayerMap();
-            new ValueChangedListenerSetup(dbRef, true, (e) => {
-                map.injectData(e.Snapshot);
+            dbRef.fetchValue((e)=> {
+                map.injectData(e);
                 initAct();
             });
 

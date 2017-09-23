@@ -10,7 +10,7 @@ namespace RFNEet.firebase {
 
         public string pid;
         public string oid;
-        public DatabaseReference dataFire;
+        public DBRefenece dataFire;
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
 
 
@@ -34,8 +34,8 @@ namespace RFNEet.firebase {
         }
 
 
-        private void onValueChanged(object sender, ValueChangedEventArgs ea) {
-            string s = ea.Snapshot.GetRawJsonValue();
+        private void onValueChanged(DBResult ea) {
+            string s = ea.getRawJsonValue();
             RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(s);
             rd.setSource(s);
             if (!string.Equals(rd.sid, FirebaseManager.getMePid())) {

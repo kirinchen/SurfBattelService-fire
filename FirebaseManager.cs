@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Firebase.Unity.Editor;
-using Firebase.Database;
+
 
 namespace RFNEet.firebase {
     public class FirebaseManager : MonoBehaviour {
@@ -13,7 +12,9 @@ namespace RFNEet.firebase {
         public string roomId { get; private set; }
         public FirePlayerQueuer playerQueuer { get; private set; }
         private FireRepo repo;
-        private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+        //private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+        private DBInit initer = new FireDBInit();
+
 
         void Awake() {
             playerQueuer = gameObject.AddComponent<FirePlayerQueuer>();
@@ -22,29 +23,22 @@ namespace RFNEet.firebase {
         public void init(string rid, Action<bool> icb = null) {
             addInitedAction(icb);
             roomId = rid;
-            dependencyStatus = FirebaseApp.CheckDependencies();
-            if (dependencyStatus != DependencyStatus.Available) {
-                FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-                    dependencyStatus = FirebaseApp.CheckDependencies();
-                    if (dependencyStatus == DependencyStatus.Available) {
-                        InitializeFirebase();
-                    } else {
-                        Debug.LogError(
-                            "Could not resolve all Firebase dependencies: " + dependencyStatus);
-                        doneInited(false);
-                    }
-                });
-            } else {
-                InitializeFirebase();
-            }
+
+            initer.init(onFailInitializeFirebase, InitializeFirebase);
+
+
         }
 
-
+        private void onFailInitializeFirebase(string msg) {
+            Debug.LogError(
+                          msg);
+            doneInited(false);
+        }
 
         private List<Action<bool>> initedActions = new List<Action<bool>>();
         public void addInitedAction(Action<bool> a) {
             if (initedActions == null) {
-                a(dependencyStatus == DependencyStatus.Available);
+                a(initer.isOK());
             } else {
                 initedActions.Add(a);
             }
@@ -52,11 +46,9 @@ namespace RFNEet.firebase {
 
         private void InitializeFirebase() {
             Debug.Log("InitializeFirebase");
-            FirebaseApp app = FirebaseApp.DefaultInstance;
-            app.SetEditorDatabaseUrl(FireConfig.getInstance().firebaseUrl);
-            if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
+            initer.createConnect();
             repo = gameObject.AddComponent<FireRepo>();
-            repo.initFire(roomId, () => {
+            repo.initFire(initer.createRootRef(roomId), () => {
                 doneInited(true);
             });
 
@@ -66,7 +58,7 @@ namespace RFNEet.firebase {
             return getInstance().repo;
         }
 
-        public static DatabaseReference getDBRef() {
+        public static DBRefenece getDBRef() {
             return getRepo().dbRef;
         }
 
