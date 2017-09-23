@@ -10,7 +10,7 @@ namespace RFNEet.firebase {
         public string oid;
 
         void initAtFire(FireObjGener.InitBundle ib) {
-            Debug.Log("FireObj");
+            Debug.Log("FireObj init=" + name);
             node = ib.node;
             setData(ib.data);
             node.addValueChangedListener(onValueChnaged);

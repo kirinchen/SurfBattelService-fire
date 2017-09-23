@@ -24,6 +24,7 @@ namespace RFNEet.firebase {
         internal void post(RemoteData o) {
             o.pid = pid;
             o.oid = oid;
+            o.sid = FirebaseManager.getMePid();
             string s = JsonConvert.SerializeObject(o);
             dataFire.SetRawJsonValueAsync(s);
         }
@@ -37,9 +38,11 @@ namespace RFNEet.firebase {
             string s = ea.Snapshot.GetRawJsonValue();
             RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(s);
             rd.setSource(s);
-            valueChangedListeners.ForEach(l => {
-                l(rd);
-            });
+            if (!string.Equals(rd.sid, FirebaseManager.getMePid())) {
+                valueChangedListeners.ForEach(l => {
+                    l(rd);
+                });
+            }
         }
     }
 }

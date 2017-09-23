@@ -11,8 +11,14 @@ namespace RFNEet.firebase {
 
         private static FirebaseManager instance;
         public string roomId { get; private set; }
+        public FirePlayerQueuer playerQueuer { get; private set; }
         private FireRepo repo;
         private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+
+        void Awake() {
+            playerQueuer = gameObject.AddComponent<FirePlayerQueuer>();
+        }
+
         public void init(string rid, Action<bool> icb = null) {
             addInitedAction(icb);
             roomId = rid;
@@ -32,6 +38,8 @@ namespace RFNEet.firebase {
                 InitializeFirebase();
             }
         }
+
+
 
         private List<Action<bool>> initedActions = new List<Action<bool>>();
         public void addInitedAction(Action<bool> a) {
@@ -58,10 +66,13 @@ namespace RFNEet.firebase {
             return getInstance().repo;
         }
 
-        internal static DatabaseReference getDBRef() {
+        public static DatabaseReference getDBRef() {
             return getRepo().dbRef;
         }
 
+        public static string getMePid() {
+            return getInstance().playerQueuer.meId;
+        }
 
 
         private void doneInited(bool b) {
