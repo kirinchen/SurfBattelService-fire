@@ -32,19 +32,19 @@ namespace RFNEet.firebase {
 
         public interface Handler {
 
-            void onDataInit(string pid, string oid, FireNode fn, RemoteData v);
+            GameObject onDataInit(string pid, string oid, FireNode fn, RemoteData v);
         }
 
         private Handler getHandler() {
             Handler h = GetComponentInChildren<Handler>();
-            return h == null ? emth : h;
+            return h /*== null ? emth : h*/;
         }
 
-        private Empty emth = new Empty();
-        public class Empty : Handler {
-            public void onDataInit(string pid, string oid, FireNode fn, RemoteData v) {
-            }
-        }
+        //private Empty emth = new Empty();
+        //public class Empty : Handler {
+        //    public void onDataInit(string pid, string oid, FireNode fn, RemoteData v) {
+        //    }
+        //}
 
 
     }

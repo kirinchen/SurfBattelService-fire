@@ -36,6 +36,7 @@ namespace RFNEet.firebase {
 
         private void onValueChanged(DBResult ea) {
             string s = ea.getRawJsonValue();
+            if (string.IsNullOrEmpty(s)) return;
             RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(s);
             rd.setSource(s);
             if (!string.Equals(rd.sid, FirebaseManager.getMePid())) {

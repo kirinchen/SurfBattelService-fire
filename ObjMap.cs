@@ -13,10 +13,18 @@ namespace RFNEet.firebase {
             this.pid = pid;
         }
 
-        internal override FireNode genChild( DBResult ds) {
+        internal override FireNode genChild(DBResult ds) {
+            RemoteData rd = parseRemoteData(ds);
             FireNode fn = new FireNode(pid, ds.key());
-            FireRepo.Handler h = FirebaseManager.getRepo().handler;
-            h.onDataInit(pid, ds.key(), fn, parseRemoteData(ds));
+            GameObject go = null;
+            if (FirePlayerQueuer.KEY_TAG.Equals(rd.tag)) {
+                go = FirebaseManager.getInstance().playerQueuer.gameObject;
+            } else {
+                FireRepo.Handler h = FirebaseManager.getRepo().handler;
+                go= h.onDataInit(pid, ds.key(), fn, parseRemoteData(ds));
+            }
+            InitBundle ib = new InitBundle(fn, rd);
+            go.SendMessage("initAtFire", ib, SendMessageOptions.DontRequireReceiver);
             return fn;
         }
 
@@ -27,5 +35,15 @@ namespace RFNEet.firebase {
             rd.setSource(json);
             return rd;
         }
+
+        public class InitBundle {
+            public FireNode node;
+            public RemoteData data;
+            public InitBundle(FireNode node, RemoteData data) {
+                this.node = node;
+                this.data = data;
+            }
+        }
+
     }
 }

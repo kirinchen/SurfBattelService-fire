@@ -9,7 +9,7 @@ namespace RFNEet.firebase {
         public string pid;
         public string oid;
 
-        void initAtFire(FireObjGener.InitBundle ib) {
+        void initAtFire(ObjMap.InitBundle ib) {
             node = ib.node;
             setData(ib.data);
             node.addValueChangedListener(onValueChnaged);
