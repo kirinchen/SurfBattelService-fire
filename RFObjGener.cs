@@ -19,7 +19,14 @@ namespace RFNEet.firebase {
                 LocalObject lo = lob.prefab.gameObject.scene == null ? Instantiate(lob.prefab) : lob.prefab;
                 return center.localRepo.create(lo).gameObject;
             } else {
-                RemotePlayerRepo rpr = center.getRemoteRepos()[pid];
+                RemotePlayerRepo rpr;
+                if (CommRemoteRepo.COMM_PID.Equals(pid)) {
+                    rpr = center.getCommRemoteRepo();
+                } else if (center.remoteRepos.ContainsKey(pid)) {
+                    rpr = center.remoteRepos[pid];
+                } else {
+                    rpr = center.addRemoteRepo(pid);
+                }
                 rpr.createNewObject(v);
                 return rpr.get(oid).gameObject;
             }
