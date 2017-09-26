@@ -13,7 +13,7 @@ namespace RFNEet.firebase {
         }
 
 
-        internal override ObjMap genChild( DBResult ds) {
+        internal override ObjMap genChild(DBResult ds) {
             ObjMap obj = new ObjMap(ds.key());
             obj.injectData(ds);
             return obj;
@@ -22,6 +22,14 @@ namespace RFNEet.firebase {
         internal FireNode getThanSet(string pid, string oid) {
             ObjMap om = findThanSet(pid, () => { return new ObjMap(pid); });
             return om.findThanSet(oid, () => { return new FireNode(pid, oid); });
+        }
+
+        public void foreachNode(Action<FireNode> fnA) {
+            foreach (ObjMap om in Values) {
+                foreach (FireNode fn in om.Values) {
+                    fnA(fn);
+                }
+            }
         }
 
 

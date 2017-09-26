@@ -8,17 +8,28 @@ namespace RFNEet.firebase {
         private FireNode node;
         public string pid;
         public string oid;
+        private RemoteData _lastData;
 
         void initAtFire(ObjMap.InitBundle ib) {
             node = ib.node;
             setData(ib.data);
             node.addValueChangedListener(onValueChnaged);
+            node.addChangePostActions(onNotifyChangePost);
         }
 
         private void setData(RemoteData data) {
+            _lastData = data;
             pid = data.pid;
             oid = data.oid;
             onInit(data);
+        }
+
+        private void onNotifyChangePost() {
+            RemoteData nrd = getCurrentData();
+            bool b = RemoteData.isValueSame(nrd, _lastData);
+            if (!b) {
+                node.post(nrd);
+            }
         }
 
         public void init(string p, string o) {

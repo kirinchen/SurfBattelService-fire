@@ -12,7 +12,7 @@ namespace RFNEet.firebase {
         public string oid;
         public DBRefenece dataFire;
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
-
+        private List<Action> changePostActions = new List<Action>();
 
         internal FireNode(string p, string o) {
             pid = p;
@@ -29,10 +29,19 @@ namespace RFNEet.firebase {
             dataFire.SetRawJsonValueAsync(s);
         }
 
+        internal void notifyChangePost() {
+            changePostActions.ForEach(a => {
+                a();
+            });
+        }
+
         public void addValueChangedListener(Action<RemoteData> a) {
             valueChangedListeners.Add(a);
         }
 
+        public void addChangePostActions(Action a) {
+            changePostActions.Add(a);
+        }
 
         private void onValueChanged(DBResult ea) {
             string s = ea.getRawJsonValue();

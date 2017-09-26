@@ -4,12 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace RFNEet.firebase {
     public class FirePlayerQueuer : FireObj {
+
+
+        public enum ChangePostType {
+            JustME, ALLChange,
+        }
+
         public static readonly string KEY_TAG = "@FPQ";
         private static readonly string KEY_PID = "@C";
         private static readonly string KEY_OID = "@FirePlayerQueuer";
 
         private PlayerQueuer ceneter;
         public string meId { get; private set; }
+        public ChangePostType changePostType;
 
         void Awake() {
             meId = PidGeter.getPid();
@@ -23,7 +30,14 @@ namespace RFNEet.firebase {
                     postData();
                 });
                 ceneter.addTokenPlayerChangeListener(s => {
-                    postData();
+                    switch (changePostType) {
+                        case ChangePostType.ALLChange:
+                            FirebaseManager.getRepo().notifyChangePost();
+                            break;
+                        case ChangePostType.JustME:
+                            postData();
+                            break;
+                    }
                 });
                 ceneter.addPlayer(meId);
             });

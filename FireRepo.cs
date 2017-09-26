@@ -26,6 +26,12 @@ namespace RFNEet.firebase {
 
         }
 
+        public void notifyChangePost() {
+            map.foreachNode(fn=> {
+                fn.notifyChangePost();
+            });
+        }
+
         internal FireNode get(string pid, string sid) {
             return map.getThanSet(pid, sid);
         }

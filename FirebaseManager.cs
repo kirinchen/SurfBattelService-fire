@@ -17,7 +17,10 @@ namespace RFNEet.firebase {
 
 
         void Awake() {
-            playerQueuer = gameObject.AddComponent<FirePlayerQueuer>();
+            playerQueuer = GetComponent<FirePlayerQueuer>();
+            if (playerQueuer == null) {
+                playerQueuer = gameObject.AddComponent<FirePlayerQueuer>();
+            }
         }
 
         public void init(string rid, Action<bool> icb = null) {
