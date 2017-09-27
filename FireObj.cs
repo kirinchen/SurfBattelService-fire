@@ -13,9 +13,11 @@ namespace RFNEet.firebase {
         void initAtFire(ObjMap.InitBundle ib) {
             node = ib.node;
             setData(ib.data);
-            node.addValueChangedListener(onValueChnaged);
+            node.addValueChangedListener(_onValueChnaged);
             node.addChangePostActions(onNotifyChangePost);
         }
+
+
 
         private void setData(RemoteData data) {
             _lastData = data;
@@ -32,17 +34,24 @@ namespace RFNEet.firebase {
             }
         }
 
-        public void init(string p, string o) {
+        public void init(string p, string o, bool autoPost = true) {
             if (node != null) return;
             pid = p;
             oid = o;
             node = FirebaseManager.getRepo().get(pid, oid);
-            postData();
             node.addValueChangedListener(onValueChnaged);
+            node.addChangePostActions(onNotifyChangePost);
+            if (autoPost) postData();
         }
 
         public void postData() {
-            node.post(getCurrentData());
+            _lastData = getCurrentData();
+            node.post(_lastData);
+        }
+
+        private void _onValueChnaged(RemoteData obj) {
+            _lastData = getCurrentData();
+            onValueChnaged(obj);
         }
 
         internal abstract RemoteData getCurrentData();
