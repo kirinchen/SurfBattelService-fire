@@ -12,13 +12,17 @@ namespace RFNEet.firebase {
 
         public void createConnect() {
             FirebaseApp app = FirebaseApp.DefaultInstance;
-            app.SetEditorDatabaseUrl(FireConfig.getInstance().firebaseUrl);
+            string fireUrl = FireConfig.getInstance().getFirebaseUrl();
+            Debug.Log("fireUrl=" + fireUrl);
+            app.SetEditorDatabaseUrl(fireUrl);
             if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
 
         }
 
         public DBRefenece createRootRef(string roomId) {
-            return new FireDBRefence(FirebaseDatabase.DefaultInstance.GetReference(FireConfig.getInstance().rootNode).Child(roomId));
+            string root = FireConfig.getInstance().getRootNode();
+            Debug.Log("root=" + root + " rid=" + roomId);
+            return new FireDBRefence(FirebaseDatabase.DefaultInstance.GetReference(root).Child(roomId));
         }
 
         public void init(Action<string> onFailInitializeFirebase, Action initializeFirebase) {
