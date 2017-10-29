@@ -7,7 +7,7 @@ namespace RFNEet.firebase {
 #if Yoar
 
         public override string getFirebaseUrl() {
-            return com.surfm.yoar.world.Constant.FIREBASE_URL;
+            return com.surfm.yoar.Constant.FIREBASE_URL;
         }
 
         public override string getRootNode() {
