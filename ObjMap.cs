@@ -43,6 +43,17 @@ namespace RFNEet.firebase {
             return rd;
         }
 
+        internal override void onChildRemoved(string v, FireNode fn) {
+            remove(v);
+        }
+
+        internal override void removeMe() {
+            base.removeMe();
+            new List<string>(Keys).ForEach(s=> {
+                remove(s);
+            });
+        }
+
         public class InitBundle {
             public FireNode node;
             public RemoteData data;

@@ -21,9 +21,22 @@ namespace RFNEet.firebase {
                 T t = genChild(ds);
             }
             dbRef.childAdded += onChildAdded;
+            dbRef.childRemoved += onChildRemoved;
         }
 
+        private void onChildRemoved(DBResult ea) {
+            if (!this.ContainsKey(ea.key())) return;
+            T t = this[ea.key()];
+            onChildRemoved(ea.key(), t);
+            this.Remove(ea.key());
+        }
 
+        internal virtual void removeMe() {
+            dbRef.childAdded -= onChildAdded;
+            dbRef.childRemoved -= onChildRemoved;
+        } 
+
+        internal abstract void onChildRemoved(string v,T t);
         internal abstract T genChild(DBResult snapshot);
     }
 }

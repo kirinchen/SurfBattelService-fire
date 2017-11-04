@@ -20,6 +20,7 @@ namespace RFNEet.firebase {
             oid = o;
             dataFire = FirebaseManager.getDBRef().Child(pid).Child(oid);
             dataFire.ValueChanged += onValueChanged;
+            
         }
 
         internal void post(RemoteData o) {

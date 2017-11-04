@@ -12,10 +12,12 @@ namespace RFNEet.firebase {
         private DatabaseReference body;
         private Action<DBResult> childAddedAction;
         private Action<DBResult> valueChangedAction;
+        private Action<DBResult> childRemovedAction;
 
 
         public FireDBRefence(DatabaseReference body) {
             this.body = body;
+           // body.ChildRemoved
         }
 
         public void fetchValue(Action<DBResult> a) {
@@ -74,6 +76,23 @@ namespace RFNEet.firebase {
             }
         }
 
+        public Action<DBResult> childRemoved
+        {
+            get
+            {
+                return childRemovedAction;
+            }
 
+            set
+            {
+                bool notset = childRemovedAction == null;
+                childRemovedAction = value;
+                if (notset) {
+                    body.ChildRemoved += (s, e) => {
+                        childRemovedAction(new FireDBReslut(e.Snapshot));
+                    };
+                }
+            }
+        }
     }
 }

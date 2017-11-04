@@ -6,6 +6,7 @@ namespace RFNEet.firebase {
     public interface DBRefenece {
 
         Action<DBResult> childAdded { get; set; }
+        Action<DBResult> childRemoved { get; set; }
         Action<DBResult> ValueChanged { get; set; }
 
         void fetchValue(Action<DBResult> a);

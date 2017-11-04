@@ -37,5 +37,9 @@ namespace RFNEet.firebase {
                 this[pid].remove(oid);
             }
         }
+
+        internal override void onChildRemoved(string v,ObjMap om) {
+            om.removeMe();
+        }
     }
 }
