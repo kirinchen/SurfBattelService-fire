@@ -33,6 +33,10 @@ namespace RFNEet.firebase {
             body.SetRawJsonValueAsync(s);
         }
 
+        public void removeMe() {
+            body.RemoveValueAsync();
+        }
+
         public Action<DBResult> childAdded
         {
             get

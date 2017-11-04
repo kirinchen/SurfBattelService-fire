@@ -46,6 +46,10 @@ namespace RFNEet.firebase {
             return h /*== null ? emth : h*/;
         }
 
+        internal void remove(string pid, string oid) {
+            map.remove(pid,oid);
+        }
+
         //private Empty emth = new Empty();
         //public class Empty : Handler {
         //    public void onDataInit(string pid, string oid, FireNode fn, RemoteData v) {

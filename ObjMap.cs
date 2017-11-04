@@ -21,13 +21,20 @@ namespace RFNEet.firebase {
                 go = FirebaseManager.getInstance().playerQueuer.gameObject;
             } else {
                 FireRepo.Handler h = FirebaseManager.getRepo().handler;
-                go= h.onDataInit(pid, ds.key(), fn, parseRemoteData(ds));
+                go = h.onDataInit(pid, ds.key(), fn, parseRemoteData(ds));
             }
             InitBundle ib = new InitBundle(fn, rd);
             go.SendMessage("initAtFire", ib, SendMessageOptions.DontRequireReceiver);
             return fn;
         }
 
+        public void remove(string oid) {
+            if (ContainsKey(oid)) {
+                FireNode fn = this[oid];
+                fn.removeMe();
+                Remove(oid);
+            }
+        }
 
         public static RemoteData parseRemoteData(DBResult ds) {
             string json = ds.getRawJsonValue();

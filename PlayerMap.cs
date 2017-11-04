@@ -32,6 +32,10 @@ namespace RFNEet.firebase {
             }
         }
 
-
+        internal void remove(string pid, string oid) {
+            if (ContainsKey(pid)) {
+                this[pid].remove(oid);
+            }
+        }
     }
 }

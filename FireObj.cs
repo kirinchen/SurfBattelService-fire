@@ -17,8 +17,6 @@ namespace RFNEet.firebase {
             node.addChangePostActions(onNotifyChangePost);
         }
 
-
-
         private void setData(RemoteData data) {
             _lastData = data;
             pid = data.pid;
@@ -52,6 +50,16 @@ namespace RFNEet.firebase {
         private void _onValueChnaged(RemoteData obj) {
             _lastData = getCurrentData();
             onValueChnaged(obj);
+        }
+
+        public void removeMe() {
+            if (!node.removed) {
+                node.removeMe();
+            }
+        }
+
+        void OnDestroy() {
+            removeMe();
         }
 
         internal abstract RemoteData getCurrentData();

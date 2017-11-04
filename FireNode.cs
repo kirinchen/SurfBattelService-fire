@@ -13,6 +13,7 @@ namespace RFNEet.firebase {
         public DBRefenece dataFire;
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
         private List<Action> changePostActions = new List<Action>();
+        public bool removed { get; private set; }
 
         internal FireNode(string p, string o) {
             pid = p;
@@ -33,6 +34,15 @@ namespace RFNEet.firebase {
             changePostActions.ForEach(a => {
                 a();
             });
+        }
+
+        public void removeMe() {
+            if (!removed) {
+                removed = true;
+                dataFire.ValueChanged -= onValueChanged;
+                dataFire.removeMe();
+                FirebaseManager.getRepo().remove(pid, oid);
+            }
         }
 
         public void addValueChangedListener(Action<RemoteData> a) {
