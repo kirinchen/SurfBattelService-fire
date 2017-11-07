@@ -53,6 +53,7 @@ namespace RFNEet.firebase {
         }
 
         public void removeMe() {
+            if (node == null) return;
             if (!node.removed) {
                 node.removeMe();
             }
