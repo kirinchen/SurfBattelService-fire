@@ -59,8 +59,15 @@ namespace RFNEet.firebase {
             }
         }
 
+        private bool _appQuited = false;
+        void OnApplicationQuit() {
+            _appQuited = true;
+        }
+
         void OnDestroy() {
-            removeMe();
+            if (!_appQuited) {
+                removeMe();
+            }
         }
 
         internal abstract RemoteData getCurrentData();

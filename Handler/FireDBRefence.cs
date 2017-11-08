@@ -17,7 +17,7 @@ namespace RFNEet.firebase {
 
         public FireDBRefence(DatabaseReference body) {
             this.body = body;
-           // body.ChildRemoved
+            // body.ChildRemoved
         }
 
         public void fetchValue(Action<DBResult> a) {
