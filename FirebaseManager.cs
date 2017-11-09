@@ -23,18 +23,21 @@ namespace RFNEet.firebase {
             }
         }
 
-        public void init(string rid, Action<bool> icb = null) {
+        public void init(string rid, bool offline, Action<bool> icb = null) {
             addInitedAction(icb);
             roomId = rid;
-
+            if (offline) {
+                initer = new LocalDBInit();
+            } else {
+                initer = new FireDBInit();
+            }
             initer.init(onFailInitializeFirebase, InitializeFirebase);
 
 
         }
 
         private void onFailInitializeFirebase(string msg) {
-            Debug.LogError(
-                          msg);
+            Debug.LogError(msg);
             doneInited(false);
         }
 

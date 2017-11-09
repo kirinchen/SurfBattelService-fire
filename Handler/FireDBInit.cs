@@ -25,7 +25,7 @@ namespace RFNEet.firebase {
             return new FireDBRefence(FirebaseDatabase.DefaultInstance.GetReference(root).Child(roomId));
         }
 
-        public void init(Action<string> onFailInitializeFirebase, Action initializeFirebase) {
+        public void init( Action<string> onFailInitializeFirebase, Action initializeFirebase) {
             dependencyStatus = FirebaseApp.CheckDependencies();
             if (dependencyStatus != DependencyStatus.Available) {
                 FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
