@@ -22,33 +22,35 @@ namespace RFNEet.firebase {
 
 
         public class DBR : DBRefenece {
+            private Action<DBResult> _childAdded = (d) => { };
             public Action<DBResult> childAdded
             {
                 get
                 {
-                    return childAdded;
+                    return _childAdded;
                 }
 
                 set
                 {
-                    childAdded = value;
+                    _childAdded = value;
                 }
             }
 
+            private Action<DBResult> _childRemoved = (d) => { };
             public Action<DBResult> childRemoved
             {
                 get
                 {
-                    return childRemoved;
+                    return _childRemoved;
                 }
 
                 set
                 {
-                    childRemoved = value;
+                    _childRemoved = value;
                 }
             }
 
-            private Action<DBResult> _ValueChanged;
+            private Action<DBResult> _ValueChanged = (d) => { };
             public Action<DBResult> ValueChanged
             {
                 get
