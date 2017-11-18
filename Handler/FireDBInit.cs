@@ -13,7 +13,6 @@ namespace RFNEet.firebase {
         public void createConnect() {
             FirebaseApp app = FirebaseApp.DefaultInstance;
             string fireUrl = FireConfig.getInstance().getFirebaseUrl();
-            Debug.Log("fireUrl=" + fireUrl);
             app.SetEditorDatabaseUrl(fireUrl);
             if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
 

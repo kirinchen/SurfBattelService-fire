@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 namespace RFNEet.firebase {
     public interface DBRefenece {
@@ -11,7 +12,9 @@ namespace RFNEet.firebase {
 
         void fetchValue(Action<DBResult> a);
 
+        DBRefenece parent();
         DBRefenece Child(string pid);
+        Task SetValueAsync(object value);
         void SetRawJsonValueAsync(string s);
         void removeMe();
     }

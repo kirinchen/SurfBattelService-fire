@@ -38,7 +38,16 @@ namespace RFNEet.firebase {
             }
         }
 
-        internal override void onChildRemoved(string v,ObjMap om) {
+        internal override void removeMe() {
+            base.removeMe();
+            List<string> keys = new List<string>(Keys);
+            keys.ForEach(k => {
+                this[k].removeMe();
+            });
+            Clear();
+        }
+
+        internal override void onChildRemoved(string v, ObjMap om) {
             om.removeMe();
         }
     }

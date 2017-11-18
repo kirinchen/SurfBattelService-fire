@@ -10,6 +10,8 @@ namespace RFNEet.firebase {
 
         public readonly string keyTag = "tag";
 
+        public static readonly string SKIP_KEY_PREFIX = "!SKP_";
+
 
         public DBRefenece dbRef { get; private set; }
         private PlayerMap map;
@@ -19,7 +21,7 @@ namespace RFNEet.firebase {
             dbRef = df;
             handler = getHandler();
             map = new PlayerMap();
-            dbRef.fetchValue((e)=> {
+            dbRef.fetchValue((e) => {
                 map.injectData(e);
                 initAct();
             });
@@ -27,7 +29,7 @@ namespace RFNEet.firebase {
         }
 
         public void notifyChangePost() {
-            map.foreachNode(fn=> {
+            map.foreachNode(fn => {
                 fn.notifyChangePost();
             });
         }
@@ -47,7 +49,11 @@ namespace RFNEet.firebase {
         }
 
         internal void remove(string pid, string oid) {
-            map.remove(pid,oid);
+            map.remove(pid, oid);
+        }
+
+        internal void removeAll() {
+            map.removeMe();
         }
 
 

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RFNEet.firebase {
     public abstract class FireObj : MonoBehaviour {
 
-        private FireNode node;
+        protected FireNode node { get; private set; }
         public string pid;
         public string oid;
         private RemoteData _lastData;
@@ -14,7 +14,8 @@ namespace RFNEet.firebase {
             node = ib.node;
             setData(ib.data);
             node.addValueChangedListener(_onValueChnaged);
-            node.addChangePostActions(onNotifyChangePost);
+            node.changePostFunc = (onNotifyChangePost);
+            node.onRemoveAction = onRemoveAction;
         }
 
         private void setData(RemoteData data) {
@@ -24,12 +25,14 @@ namespace RFNEet.firebase {
             onInit(data);
         }
 
-        private void onNotifyChangePost() {
+        private RemoteData onNotifyChangePost() {
             RemoteData nrd = getCurrentData();
             bool b = RemoteData.isValueSame(nrd, _lastData);
             if (!b) {
                 node.post(nrd);
+                return nrd;
             }
+            return null;
         }
 
         public void init(string p, string o, bool autoPost = true) {
@@ -38,7 +41,7 @@ namespace RFNEet.firebase {
             oid = o;
             node = FirebaseManager.getRepo().get(pid, oid);
             node.addValueChangedListener(onValueChnaged);
-            node.addChangePostActions(onNotifyChangePost);
+            node.changePostFunc = (onNotifyChangePost);
             if (autoPost) postData();
         }
 
@@ -68,6 +71,10 @@ namespace RFNEet.firebase {
             if (!_appQuited && FirebaseManager.getInstance() != null) {
                 removeMe();
             }
+        }
+
+        internal virtual void onRemoveAction() {
+            Destroy(gameObject);
         }
 
         internal abstract RemoteData getCurrentData();

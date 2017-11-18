@@ -15,13 +15,14 @@ namespace RFNEet.firebase {
 
         internal override FireNode genChild(DBResult ds) {
             RemoteData rd = parseRemoteData(ds);
+            if (rd == null) return null;
             FireNode fn = new FireNode(pid, ds.key());
             GameObject go = null;
             if (FirePlayerQueuer.KEY_TAG.Equals(rd.tag)) {
                 go = FirebaseManager.getInstance().playerQueuer.gameObject;
             } else {
                 FireRepo.Handler h = FirebaseManager.getRepo().handler;
-                go = h.onDataInit(pid, ds.key(), fn, parseRemoteData(ds));
+                go = h.onDataInit(pid, ds.key(), fn, rd);
             }
             InitBundle ib = new InitBundle(fn, rd);
             go.SendMessage("initAtFire", ib, SendMessageOptions.DontRequireReceiver);
@@ -39,6 +40,7 @@ namespace RFNEet.firebase {
         public static RemoteData parseRemoteData(DBResult ds) {
             string json = ds.getRawJsonValue();
             RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(json);
+            if (string.IsNullOrEmpty(rd.pid) && string.IsNullOrEmpty(rd.pid)) return null;
             rd.setSource(json);
             return rd;
         }
@@ -49,7 +51,7 @@ namespace RFNEet.firebase {
 
         internal override void removeMe() {
             base.removeMe();
-            new List<string>(Keys).ForEach(s=> {
+            new List<string>(Keys).ForEach(s => {
                 remove(s);
             });
         }

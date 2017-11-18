@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 namespace RFNEet.firebase {
     public class LocalDBInit : DBInit {
@@ -78,6 +79,14 @@ namespace RFNEet.firebase {
 
             public void SetRawJsonValueAsync(string s) {
             }
+
+            public DBRefenece parent() {
+                return new DBR();
+            }
+
+            public Task SetValueAsync(object value) {
+                throw new NotImplementedException();
+            }
         }
 
         public class DBRR : DBResult {
@@ -88,6 +97,10 @@ namespace RFNEet.firebase {
 
             public string getRawJsonValue() {
                 return string.Empty;
+            }
+
+            public object GetValue() {
+                return null;
             }
 
             public string key() {

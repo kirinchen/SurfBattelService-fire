@@ -21,6 +21,10 @@ namespace RFNEet.firebase {
             return body.GetRawJsonValue();
         }
 
+        public object GetValue() {
+            return body.Value;
+        }
+
         public string key() {
             return body.Key;
         }

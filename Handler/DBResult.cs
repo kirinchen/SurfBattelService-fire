@@ -7,5 +7,6 @@ namespace RFNEet.firebase {
         IEnumerable<DBResult> children();
         string key();
         string getRawJsonValue();
+        object GetValue();
     }
 }

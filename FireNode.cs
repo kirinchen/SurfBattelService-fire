@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using surfm.tool;
 
 namespace RFNEet.firebase {
     public class FireNode {
@@ -12,15 +13,17 @@ namespace RFNEet.firebase {
         public string oid;
         public DBRefenece dataFire;
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
-        private List<Action> changePostActions = new List<Action>();
+        internal Func<RemoteData> changePostFunc = () => { return null; };
+        internal Action onRemoveAction = () => { };
         public bool removed { get; private set; }
+        public readonly CallbackList initCallback = new CallbackList();
 
         internal FireNode(string p, string o) {
             pid = p;
             oid = o;
             dataFire = FirebaseManager.getDBRef().Child(pid).Child(oid);
             dataFire.ValueChanged += onValueChanged;
-            
+
         }
 
         internal void post(RemoteData o) {
@@ -32,9 +35,10 @@ namespace RFNEet.firebase {
         }
 
         internal void notifyChangePost() {
-            changePostActions.ForEach(a => {
-                a();
-            });
+            RemoteData rd = changePostFunc();
+            if (rd != null) {
+                post(rd);
+            }
         }
 
         public void removeMe() {
@@ -43,6 +47,7 @@ namespace RFNEet.firebase {
                 dataFire.ValueChanged -= onValueChanged;
                 dataFire.removeMe();
                 FirebaseManager.getRepo().remove(pid, oid);
+                onRemoveAction();
             }
         }
 
@@ -50,20 +55,19 @@ namespace RFNEet.firebase {
             valueChangedListeners.Add(a);
         }
 
-        public void addChangePostActions(Action a) {
-            changePostActions.Add(a);
-        }
 
         private void onValueChanged(DBResult ea) {
             string s = ea.getRawJsonValue();
-            if (string.IsNullOrEmpty(s)) return;
-            RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(s);
-            rd.setSource(s);
-            if (!string.Equals(rd.sid, FirebaseManager.getMePid())) {
-                valueChangedListeners.ForEach(l => {
-                    l(rd);
-                });
+            if (!string.IsNullOrEmpty(s)) {
+                RemoteData rd = JsonConvert.DeserializeObject<RemoteData>(s);
+                rd.setSource(s);
+                if (!string.Equals(rd.sid, FirebaseManager.getMePid())) {
+                    valueChangedListeners.ForEach(l => {
+                        l(rd);
+                    });
+                }
             }
+            initCallback.done();
         }
     }
 }

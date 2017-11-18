@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStomp;
+using System.Threading.Tasks;
 
 namespace RFNEet.firebase {
     public class FireDBRefence : DBRefenece {
@@ -17,8 +18,11 @@ namespace RFNEet.firebase {
 
         public FireDBRefence(DatabaseReference body) {
             this.body = body;
+         
             // body.ChildRemoved
         }
+
+
 
         public void fetchValue(Action<DBResult> a) {
             new ValueChangedListenerSetup(body, true, (e) => {
@@ -31,12 +35,21 @@ namespace RFNEet.firebase {
             return new FireDBRefence(dr);
         }
 
+        public DBRefenece parent() {
+            DatabaseReference d = body.Parent;
+            return new FireDBRefence(d);
+        }
+
         public void SetRawJsonValueAsync(string s) {
             body.SetRawJsonValueAsync(s);
         }
 
         public void removeMe() {
             body.RemoveValueAsync();
+        }
+
+        public Task SetValueAsync(object value) {
+            return body.SetValueAsync(value);
         }
 
         public Action<DBResult> childAdded
