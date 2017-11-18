@@ -65,7 +65,7 @@ namespace RFNEet.firebase {
         }
 
         void OnDestroy() {
-            if (!_appQuited) {
+            if (!_appQuited && FirebaseManager.getInstance() != null) {
                 removeMe();
             }
         }
