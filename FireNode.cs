@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using surfm.tool;
+using System.Threading.Tasks;
 
 namespace RFNEet.firebase {
     public class FireNode {
@@ -26,12 +27,12 @@ namespace RFNEet.firebase {
 
         }
 
-        internal void post(RemoteData o) {
+        internal Task post(RemoteData o) {
             o.pid = pid;
             o.oid = oid;
             o.sid = FirebaseManager.getMePid();
             string s = JsonConvert.SerializeObject(o);
-            dataFire.SetRawJsonValueAsync(s);
+            return dataFire.SetRawJsonValueAsync(s);
         }
 
         internal void notifyChangePost() {

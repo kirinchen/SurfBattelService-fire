@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 namespace RFNEet.firebase {
     public abstract class FireObj : MonoBehaviour {
@@ -35,19 +36,19 @@ namespace RFNEet.firebase {
             return null;
         }
 
-        public void init(string p, string o, bool autoPost = true) {
+        public void init(string p, string o) {
             if (node != null) return;
             pid = p;
             oid = o;
             node = FirebaseManager.getRepo().get(pid, oid);
             node.addValueChangedListener(onValueChnaged);
             node.changePostFunc = (onNotifyChangePost);
-            if (autoPost) postData();
+          
         }
 
-        public void postData() {
+        public Task postData() {
             _lastData = getCurrentData();
-            node.post(_lastData);
+            return node.post(_lastData);
         }
 
         private void _onValueChnaged(RemoteData obj) {

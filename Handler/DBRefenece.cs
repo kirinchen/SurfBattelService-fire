@@ -15,7 +15,7 @@ namespace RFNEet.firebase {
         DBRefenece parent();
         DBRefenece Child(string pid);
         Task SetValueAsync(object value);
-        void SetRawJsonValueAsync(string s);
+        Task SetRawJsonValueAsync(string s);
         void removeMe();
     }
 }

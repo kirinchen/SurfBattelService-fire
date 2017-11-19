@@ -40,8 +40,8 @@ namespace RFNEet.firebase {
             return new FireDBRefence(d);
         }
 
-        public void SetRawJsonValueAsync(string s) {
-            body.SetRawJsonValueAsync(s);
+        public Task SetRawJsonValueAsync(string s) {
+            return body.SetRawJsonValueAsync(s);
         }
 
         public void removeMe() {

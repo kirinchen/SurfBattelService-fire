@@ -77,7 +77,8 @@ namespace RFNEet.firebase {
             public void removeMe() {
             }
 
-            public void SetRawJsonValueAsync(string s) {
+            public Task SetRawJsonValueAsync(string s) {
+                return Task.Factory.StartNew<object>(()=> { return null; });
             }
 
             public DBRefenece parent() {
@@ -85,7 +86,7 @@ namespace RFNEet.firebase {
             }
 
             public Task SetValueAsync(object value) {
-                throw new NotImplementedException();
+                return Task.Factory.StartNew<object>(() => { return null; });
             }
         }
 
