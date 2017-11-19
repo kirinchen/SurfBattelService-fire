@@ -32,8 +32,10 @@ namespace RFNEet.firebase {
                 initer = new FireDBInit();
             }
             initer.init(onFailInitializeFirebase, InitializeFirebase);
+        }
 
-
+        public bool isOK() {
+            return initer.isOK();
         }
 
         private void onFailInitializeFirebase(string msg) {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace RFNEet.firebase {
     public class FirePlayerQueuer : FireObj {
-
+        public static FirePlayerQueuer instance { get; private set; }
 
         public enum ChangePostType {
             JustME, ALLChange,
@@ -22,11 +22,10 @@ namespace RFNEet.firebase {
         public string meId { get; private set; }
         public ChangePostType changePostType;
 
-        public PlayerQueuer.Data debugData;
-
-      //  public List<string> realPids;
+        //  public List<string> realPids;
 
         void Awake() {
+            instance = this;
             meId = PidGeter.getPid();
             ceneter = gameObject.AddComponent<PlayerQueuer>();
         }
@@ -36,10 +35,6 @@ namespace RFNEet.firebase {
                 init(KEY_PID, KEY_OID, false);
                 node.initCallback.add(onFirstFetch);
             });
-        }
-
-        void Update() {
-            debugData = ceneter.getCurrentData();
         }
 
         private void onFirstFetch() {
@@ -56,10 +51,16 @@ namespace RFNEet.firebase {
                         break;
                 }
             });
-            ceneter.addPlayer(meId);
+
             getExRef().ValueChanged += onPidsChange;
         }
 
+
+        new public void OnDestroy() {
+            Debug.Log("~~~~OnDestroy " + node.removed);
+            getExRef().ValueChanged -= onPidsChange;
+            base.OnDestroy();
+        }
 
         private DBRefenece getExRef() {
             return node.dataFire.parent().Child(FireRepo.SKIP_KEY_PREFIX + KEY_EX_PIDS);
@@ -71,14 +72,16 @@ namespace RFNEet.firebase {
         }
 
         private void onPidsChange(DBResult obj) {
+            if (node.removed) return;
             string s = obj.getRawJsonValue();
+            Debug.Log("~~~~onPidsChange " + s + " rm=" + node.removed);
             if (string.IsNullOrEmpty(s)) {
-                getExRef().Child(meId).SetValueAsync(NistService.getTime().ToString("o"));
+                addMeId();
                 return;
             }
             Dictionary<string, DateTime> d = JsonConvert.DeserializeObject<Dictionary<string, DateTime>>(s);
             if (!d.ContainsKey(meId)) {
-                getExRef().Child(meId).SetValueAsync(NistService.getTime().ToString("o"));
+                addMeId();
                 return;
             }
             ceneter.getCurrentData().playerIds = new List<string>(d.Keys);
@@ -86,6 +89,13 @@ namespace RFNEet.firebase {
                 return d[a].CompareTo(d[b]);
             });
             postData();
+
+        }
+
+        private void addMeId() {
+            ceneter.addPlayer(meId);
+            getExRef().Child(meId).SetValueAsync(NistService.getTime().ToString("o"));
+            Debug.Log("c m =" + ceneter.meId + "t=" + ceneter.isToken() + " FireM " + FirebaseManager.getInstance().isOK() + " rm=" + node.removed);
         }
 
         internal override RemoteData getCurrentData() {
