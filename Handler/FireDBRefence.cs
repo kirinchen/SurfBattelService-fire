@@ -18,7 +18,7 @@ namespace RFNEet.firebase {
 
         public FireDBRefence(DatabaseReference body) {
             this.body = body;
-         
+
             // body.ChildRemoved
         }
 
@@ -83,7 +83,11 @@ namespace RFNEet.firebase {
                 valueChangedAction = value;
                 if (notset) {
                     body.ValueChanged += (s, e) => {
-                        valueChangedAction(new FireDBReslut(e.Snapshot));
+                        try {
+                            valueChangedAction(new FireDBReslut(e.Snapshot));
+                        } catch (Exception ex) {
+                            Debug.Log(e.Snapshot.Reference.Key + " " + e.Snapshot.Value + " ex=" + ex);
+                        }
                     };
                 }
             }

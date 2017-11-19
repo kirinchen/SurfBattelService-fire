@@ -25,7 +25,6 @@ namespace RFNEet.firebase {
         public Data data = new Data();
         public List<string> debugIds = new List<string>();
 
-        public readonly CallbackList fetchDataDone = new CallbackList();
 
         void Awake() {
             instance = this;
@@ -38,12 +37,14 @@ namespace RFNEet.firebase {
             FirebaseManager.getInstance().addInitedAction(b => {
                 init(KEY_PID, KEY_OID);
                 ceneter.addPlayer(meId);
-                node.initCallback.add(onFirstFetch);
                 if (createData) {
-                    Task t = postData();
-                    UnityUtils.setAsync(this, t, a);
+                    node.initCallback.reset();
+                    node.initCallback.add(onFirstFetch);
+                    node.initCallback.add(a);
+                    postData();
                 } else {
-                    fetchDataDone.add(a);
+                    node.initCallback.add(onFirstFetch);
+                    node.initCallback.add(a);
                 }
             });
         }
@@ -60,7 +61,6 @@ namespace RFNEet.firebase {
                         break;
                 }
             });
-            fetchDataDone.done();
         }
 
         internal override RemoteData getCurrentData() {
@@ -70,16 +70,18 @@ namespace RFNEet.firebase {
         }
 
         internal override void onInit(RemoteData d) {
+
             map(d.to<Data>());
         }
 
         private void map(Data d) {
-            foreach (string s in d.intoMap.Keys) {
-                if (!data.intoMap.ContainsKey(s)) {
-                    data.intoMap.Add(s, d.intoMap[s]);
+            if (d.intoMap != null && d.intoMap.Count > 0) {
+                foreach (string s in d.intoMap.Keys) {
+                    if (!data.intoMap.ContainsKey(s)) {
+                        data.intoMap.Add(s, d.intoMap[s]);
+                    }
                 }
             }
-
             ceneter.triggerTokenChange(d.token);
         }
 
