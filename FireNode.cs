@@ -14,7 +14,11 @@ namespace RFNEet.firebase {
         public string oid;
         public DBRefenece dataFire;
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
-        internal Func<RemoteData> changePostFunc = () => { return null; };
+        public struct ChangePost {
+            public RemoteData data;
+            public bool change;
+        }
+        internal Func<ChangePost> changePostFunc = () => { return new ChangePost(); };
         internal Action onRemoveAction = () => { };
         public bool removed { get; private set; }
         public readonly CallbackList initCallback = new CallbackList();
@@ -36,10 +40,9 @@ namespace RFNEet.firebase {
         }
 
         internal Task notifyChangePost() {
-            RemoteData rd = changePostFunc();
-            if (rd != null) {
-                Debug.Log("notifyChangePost=" + rd.oid);
-                return post(rd);
+            ChangePost rd = changePostFunc();
+            if (rd.change) {
+                return post(rd.data);
             }
             return Task.Factory.StartNew<object>(() => { return null; });
         }

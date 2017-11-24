@@ -26,13 +26,20 @@ namespace RFNEet.firebase {
             onInit(data);
         }
 
-        private RemoteData onNotifyChangePost() {
+        private FireNode.ChangePost onNotifyChangePost() {
             RemoteData nrd = getCurrentData();
-            bool b = RemoteData.isValueSame(nrd, _lastData);
+            bool b = isValueSame(nrd, _lastData);
             if (!b) {
-                return nrd;
+                return new FireNode.ChangePost() {
+                    change = true,
+                    data = nrd
+                };
             }
-            return null;
+            return new FireNode.ChangePost();
+        }
+
+        internal virtual bool isValueSame(RemoteData nrd, RemoteData _lastData) {
+            return RemoteData.isValueSame(nrd, _lastData);
         }
 
         public void init(string p, string o) {
@@ -42,7 +49,7 @@ namespace RFNEet.firebase {
             node = FirebaseManager.getRepo().get(pid, oid);
             node.addValueChangedListener(onValueChnaged);
             node.changePostFunc = (onNotifyChangePost);
-          
+
         }
 
         public Task postData() {
