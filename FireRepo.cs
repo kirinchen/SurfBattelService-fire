@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace RFNEet.firebase {
     public class FireRepo : MonoBehaviour {
@@ -28,10 +29,24 @@ namespace RFNEet.firebase {
 
         }
 
-        public void notifyChangePost() {
+        public void notifyChangePost(Action cb = null) {
+            List<Task> ts = new List<Task>();
             map.foreachNode(fn => {
-                fn.notifyChangePost();
+                ts.Add(fn.notifyChangePost());
             });
+            if (cb != null) {
+                StartCoroutine(waitAllNotifyDone(ts, cb));
+            }
+        }
+
+        private IEnumerator waitAllNotifyDone(List<Task> ts, Action cb) {
+            foreach (Task task in ts) {
+                yield return new WaitUntil(() => task.IsCompleted);
+                if (task.IsFaulted) {
+                    throw task.Exception;
+                }
+            }
+            cb();
         }
 
         internal FireNode get(string pid, string sid) {

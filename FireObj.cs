@@ -30,7 +30,6 @@ namespace RFNEet.firebase {
             RemoteData nrd = getCurrentData();
             bool b = RemoteData.isValueSame(nrd, _lastData);
             if (!b) {
-                node.post(nrd);
                 return nrd;
             }
             return null;

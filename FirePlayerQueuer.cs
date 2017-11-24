@@ -20,7 +20,7 @@ namespace RFNEet.firebase {
 
         private PlayerQueuer ceneter;
         public string meId { get; private set; }
-        public ChangePostType changePostType;
+      
 
         public Data data = new Data();
         public List<string> debugIds = new List<string>();
@@ -39,29 +39,14 @@ namespace RFNEet.firebase {
                 ceneter.addPlayer(meId);
                 if (createData) {
                     node.initCallback.reset();
-                    node.initCallback.add(onFirstFetch);
                     node.initCallback.add(a);
                     postData();
                 } else {
-                    node.initCallback.add(onFirstFetch);
                     node.initCallback.add(a);
                 }
             });
         }
 
-
-        private void onFirstFetch() {
-            ceneter.addTokenPlayerChangeListener(s => {
-                switch (changePostType) {
-                    case ChangePostType.ALLChange:
-                        FirebaseManager.getRepo().notifyChangePost();
-                        break;
-                    case ChangePostType.JustME:
-                        postData();
-                        break;
-                }
-            });
-        }
 
         internal override RemoteData getCurrentData() {
             RemoteData ans = data;

@@ -35,11 +35,13 @@ namespace RFNEet.firebase {
             return dataFire.SetRawJsonValueAsync(s);
         }
 
-        internal void notifyChangePost() {
+        internal Task notifyChangePost() {
             RemoteData rd = changePostFunc();
             if (rd != null) {
-                post(rd);
+                Debug.Log("notifyChangePost=" + rd.oid);
+                return post(rd);
             }
+            return Task.Factory.StartNew<object>(() => { return null; });
         }
 
         public void removeMe() {
