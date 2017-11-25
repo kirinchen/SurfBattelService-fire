@@ -27,7 +27,7 @@ namespace RFNEet.firebase {
             pid = p;
             oid = o;
             dataFire = FirebaseManager.getDBRef().Child(pid).Child(oid);
-            dataFire.ValueChanged += onValueChanged;
+            dataFire.addValueChanged( onValueChanged);
 
         }
 
@@ -50,7 +50,7 @@ namespace RFNEet.firebase {
         public void removeMe() {
             if (!removed) {
                 removed = true;
-                dataFire.ValueChanged -= onValueChanged;
+                dataFire.removeValueChanged( onValueChanged);
                 dataFire.removeMe();
                 FirebaseManager.getRepo().remove(pid, oid);
                 onRemoveAction();

@@ -23,48 +23,7 @@ namespace RFNEet.firebase {
 
 
         public class DBR : DBRefenece {
-            private Action<DBResult> _childAdded = (d) => { };
-            public Action<DBResult> childAdded
-            {
-                get
-                {
-                    return _childAdded;
-                }
-
-                set
-                {
-                    _childAdded = value;
-                }
-            }
-
-            private Action<DBResult> _childRemoved = (d) => { };
-            public Action<DBResult> childRemoved
-            {
-                get
-                {
-                    return _childRemoved;
-                }
-
-                set
-                {
-                    _childRemoved = value;
-                }
-            }
-
-            private Action<DBResult> _ValueChanged = (d) => { };
-            public Action<DBResult> ValueChanged
-            {
-                get
-                {
-                    return _ValueChanged;
-                }
-
-                set
-                {
-                    _ValueChanged = value;
-                    _ValueChanged(new DBRR());
-                }
-            }
+           
 
             public DBRefenece Child(string pid) {
                 return new DBR();
@@ -87,6 +46,27 @@ namespace RFNEet.firebase {
 
             public Task SetValueAsync(object value) {
                 return Task.Factory.StartNew<object>(() => { return null; });
+            }
+
+            public void addChildAdded(Action<DBResult> a) {
+                a(new DBRR());
+            }
+
+            public void removeChildAdded(Action<DBResult> a) {
+            }
+
+            public void addChildRemoved(Action<DBResult> a) {
+                a(new DBRR());
+            }
+
+            public void removeChildRemoved(Action<DBResult> a) {
+            }
+
+            public void addValueChanged(Action<DBResult> a) {
+                a(new DBRR());
+            }
+
+            public void removeValueChanged(Action<DBResult> a) {
             }
         }
 

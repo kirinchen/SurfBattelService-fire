@@ -22,8 +22,8 @@ namespace RFNEet.firebase {
             foreach (DBResult ds in snapshot.children()) {
                 T t = genChild(ds);
             }
-            dbRef.childAdded += onChildAdded;
-            dbRef.childRemoved += onChildRemoved;
+            dbRef.addChildAdded( onChildAdded);
+            dbRef.addChildRemoved( onChildRemoved);
         }
 
         private void onChildRemoved(DBResult ea) {
@@ -34,8 +34,8 @@ namespace RFNEet.firebase {
         }
 
         internal virtual void removeMe() {
-            dbRef.childAdded -= onChildAdded;
-            dbRef.childRemoved -= onChildRemoved;
+            dbRef.removeChildAdded(onChildAdded);
+            dbRef.removeChildRemoved(onChildRemoved);
             dbRef.removeMe();
         }
 
