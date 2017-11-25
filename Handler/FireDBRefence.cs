@@ -15,18 +15,18 @@ namespace RFNEet.firebase {
         private Action<DBResult> valueChangedAction;
         private Action<DBResult> childRemovedAction;
 
-        private EventMap<ValueChangedEventArgs> valueEventMap ;
+        private EventMap<ValueChangedEventArgs> valueEventMap;
         private EventMap<ChildChangedEventArgs> addEventMap;
         private EventMap<ChildChangedEventArgs> removeEventMap;
 
 
         public FireDBRefence(DatabaseReference body) {
             this.body = body;
-            valueEventMap = new EventMap<ValueChangedEventArgs>(body,t=> {
+            valueEventMap = new EventMap<ValueChangedEventArgs>(body, t => {
                 return t.Snapshot;
-            },h=> {
+            }, h => {
                 this.body.ValueChanged += h;
-            },h=> {
+            }, h => {
                 this.body.ValueChanged -= h;
             });
             addEventMap = new EventMap<ChildChangedEventArgs>(body, t => {
@@ -120,6 +120,7 @@ namespace RFNEet.firebase {
             }
 
             public void removeEvent(Action<DBResult> a) {
+                if (!changeEventMap.ContainsKey(a)) return;
                 EventHandler<T> h = changeEventMap[a];
                 //body.ValueChanged -= h;
                 remove(h);
