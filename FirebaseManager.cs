@@ -15,12 +15,19 @@ namespace RFNEet.firebase {
         //private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
         private DBInit initer = new FireDBInit();
 
+        public bool keepOnDestoryObj { get; private set; }
+
 
         void Awake() {
             playerQueuer = GetComponent<FirePlayerQueuer>();
             if (playerQueuer == null) {
                 playerQueuer = gameObject.AddComponent<FirePlayerQueuer>();
             }
+        }
+
+
+        public void enableKeepOnDestoryObj() {
+            keepOnDestoryObj = true;
         }
 
         public void init(string rid, bool offline, Action<bool> icb = null) {

@@ -49,14 +49,12 @@ namespace RFNEet.firebase {
             }
 
             public void addChildAdded(Action<DBResult> a) {
-                a(new DBRR());
             }
 
             public void removeChildAdded(Action<DBResult> a) {
             }
 
             public void addChildRemoved(Action<DBResult> a) {
-                a(new DBRR());
             }
 
             public void removeChildRemoved(Action<DBResult> a) {
