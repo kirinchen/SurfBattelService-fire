@@ -40,9 +40,13 @@ namespace RFNEet.firebase {
                 } else {
                     node.initCallback.add(a);
                 }
+                node.dataFire.Child("intoMap").addChildRemoved(onPlayerLeave);
             });
         }
 
+        private void onPlayerLeave(DBResult obj) {
+            data.intoMap.Remove(obj.key());
+        }
 
         internal override RemoteData getCurrentData() {
             RemoteData ans = data;
@@ -102,6 +106,11 @@ namespace RFNEet.firebase {
 
         internal override Type getDataType() {
             return typeof(Data);
+        }
+
+        public override void OnDestroy() {
+            base.OnDestroy();
+            node.dataFire.Child("intoMap").Child(meId).removeMe();
         }
 
         [System.Serializable]
