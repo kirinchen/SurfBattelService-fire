@@ -43,7 +43,6 @@ namespace RFNEet.firebase {
             }, h => {
                 this.body.ChildRemoved -= h;
             });
-
         }
 
         public void fetchValue(Action<DBResult> a) {

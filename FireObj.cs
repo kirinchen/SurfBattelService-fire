@@ -28,18 +28,23 @@ namespace RFNEet.firebase {
 
         private FireNode.ChangePost onNotifyChangePost() {
             RemoteData nrd = getCurrentData();
-            bool b = isValueSame(nrd, _lastData);
-            if (!b) {
-                return new FireNode.ChangePost() {
-                    change = true,
-                    data = nrd
-                };
-            }
-            return new FireNode.ChangePost();
+            return getValueChange(nrd, _lastData);
         }
 
-        internal virtual bool isValueSame(RemoteData nrd, RemoteData _lastData) {
-            return RemoteData.isValueSame(nrd, _lastData);
+        internal virtual FireNode.ChangePost getValueChange(RemoteData nrd, RemoteData _lastData) {
+            return getValueChangeStatic(nrd, _lastData);
+        }
+
+        public static FireNode.ChangePost getValueChangeStatic(RemoteData nrd, RemoteData _lastData) {
+            bool c = RemoteData.isValueSame(nrd, _lastData);
+            if (c) {
+                return new FireNode.ChangePost() {
+                    change = FireNode.ChangeType.ALL,
+                    data = nrd
+                };
+            } else {
+                return new FireNode.ChangePost();
+            }
         }
 
         public void init(string p, string o) {
@@ -47,7 +52,7 @@ namespace RFNEet.firebase {
             pid = p;
             oid = o;
             node = FirebaseManager.getRepo().get(pid, oid);
-            node.addValueChangedListener(onValueChnaged);
+            node.addValueChangedListener(onValueChanged);
             node.changePostFunc = (onNotifyChangePost);
 
         }
@@ -58,8 +63,8 @@ namespace RFNEet.firebase {
         }
 
         private void _onValueChnaged(RemoteData obj) {
-            _lastData = getCurrentData();
-            onValueChnaged(obj);
+            _lastData = obj.to(getDataType());
+            onValueChanged(obj);
         }
 
         public void removeMe() {
@@ -84,8 +89,9 @@ namespace RFNEet.firebase {
             Destroy(gameObject);
         }
 
+        internal abstract Type getDataType();
         internal abstract RemoteData getCurrentData();
-        internal abstract void onValueChnaged(RemoteData obj);
+        internal abstract void onValueChanged(RemoteData obj);
         internal abstract void onInit(RemoteData d);
     }
 }

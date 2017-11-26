@@ -16,7 +16,9 @@ namespace RFNEet.firebase {
         private List<Action<RemoteData>> valueChangedListeners = new List<Action<RemoteData>>();
         public struct ChangePost {
             public RemoteData data;
-            public bool change;
+            public ChangeType change;
+            public string field;
+            public object fieldData;
         }
         internal Func<ChangePost> changePostFunc = () => { return new ChangePost(); };
         internal Action onRemoveAction = () => { };
@@ -27,7 +29,7 @@ namespace RFNEet.firebase {
             pid = p;
             oid = o;
             dataFire = FirebaseManager.getDBRef().Child(pid).Child(oid);
-            dataFire.addValueChanged( onValueChanged);
+            dataFire.addValueChanged(onValueChanged);
 
         }
 
@@ -39,10 +41,23 @@ namespace RFNEet.firebase {
             return dataFire.SetRawJsonValueAsync(s);
         }
 
+        internal Task putField(string field, object o) {
+            if (o is string || o is int || o is float) {
+                dataFire.Child(field).SetValueAsync(o);
+            } else {
+                string s = JsonConvert.SerializeObject(o);
+                dataFire.Child(field).SetRawJsonValueAsync(s);
+            }
+            return dataFire.Child("sid").SetValueAsync(pid);
+
+        }
+
         internal Task notifyChangePost() {
             ChangePost rd = changePostFunc();
-            if (rd.change) {
+            if (rd.change == ChangeType.ALL) {
                 return post(rd.data);
+            } else if (rd.change == ChangeType.FieldChange) {
+                return putField(rd.field, rd.fieldData);
             }
             return Task.Factory.StartNew<object>(() => { return null; });
         }
@@ -50,7 +65,7 @@ namespace RFNEet.firebase {
         public void removeMe() {
             if (!removed) {
                 removed = true;
-                dataFire.removeValueChanged( onValueChanged);
+                dataFire.removeValueChanged(onValueChanged);
                 dataFire.removeMe();
                 FirebaseManager.getRepo().remove(pid, oid);
                 onRemoveAction();
@@ -60,7 +75,6 @@ namespace RFNEet.firebase {
         public void addValueChangedListener(Action<RemoteData> a) {
             valueChangedListeners.Add(a);
         }
-
 
         private void onValueChanged(DBResult ea) {
             string s = ea.getRawJsonValue();
@@ -74,6 +88,10 @@ namespace RFNEet.firebase {
                 }
             }
             initCallback.done();
+        }
+
+        public enum ChangeType {
+            NoChange, ALL, FieldChange
         }
     }
 }

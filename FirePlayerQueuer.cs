@@ -10,17 +10,13 @@ namespace RFNEet.firebase {
     public class FirePlayerQueuer : FireObj, PlayerQueuer.DataProvider {
         public static FirePlayerQueuer instance { get; private set; }
 
-        public enum ChangePostType {
-            JustME, ALLChange,
-        }
-
         public static readonly string KEY_TAG = "@FPQ";
         private static readonly string KEY_PID = "@C";
         private static readonly string KEY_OID = "@FirePlayerQueuer";
 
         private PlayerQueuer ceneter;
         public string meId { get; private set; }
-      
+
 
         public Data data = new Data();
         public List<string> debugIds = new List<string>();
@@ -70,7 +66,7 @@ namespace RFNEet.firebase {
             ceneter.triggerTokenChange(d.token);
         }
 
-        internal override void onValueChnaged(RemoteData obj) {
+        internal override void onValueChanged(RemoteData obj) {
             map(obj.to<Data>());
         }
 
@@ -88,10 +84,8 @@ namespace RFNEet.firebase {
             data.token = v;
             if (post == PlayerQueuer.TokePost.ALL) {
                 postData();
-                Debug.Log("setTokenPlayer=" + v);
             } else if (post == PlayerQueuer.TokePost.FIELD) {
-                node.dataFire.Child("token").SetValueAsync(v);
-                node.dataFire.Child("sid").SetValueAsync(FirebaseManager.getMePid());
+                node.putField("token", v);
             }
         }
 
@@ -104,6 +98,10 @@ namespace RFNEet.firebase {
             data.intoMap.Add(id, d);
             node.dataFire.Child("intoMap").Child(id).SetValueAsync(d.ToString("o"));
             node.dataFire.Child("sid").SetValueAsync(FirebaseManager.getMePid());
+        }
+
+        internal override Type getDataType() {
+            return typeof(Data);
         }
 
         [System.Serializable]
