@@ -34,9 +34,7 @@ namespace RFNEet.firebase {
                 init(KEY_PID, KEY_OID);
                 ceneter.addPlayer(meId);
                 if (createData) {
-                    node.initCallback.reset();
-                    node.initCallback.add(a);
-                    postData();
+                    UnityUtils.setAsync(this, postData(), a);
                 } else {
                     node.initCallback.add(a);
                 }
