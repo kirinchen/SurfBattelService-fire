@@ -6,6 +6,7 @@ using System;
 using Newtonsoft.Json;
 using surfm.tool;
 using System.Threading.Tasks;
+using RFNEet.realtimeDB;
 
 namespace RFNEet.firebase {
     public class FireNode {

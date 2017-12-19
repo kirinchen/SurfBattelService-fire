@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using RFNEet.realtimeDB;
 
 namespace RFNEet.firebase {
     public class FireRepo : MonoBehaviour {

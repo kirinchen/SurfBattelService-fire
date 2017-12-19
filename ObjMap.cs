@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Firebase.Database;
 using UnityEngine;
 using Newtonsoft.Json;
+using RFNEet.realtimeDB;
 
 namespace RFNEet.firebase {
     public class ObjMap : FireMap<FireNode> {

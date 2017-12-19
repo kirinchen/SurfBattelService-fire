@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Firebase.Database;
 using UnityEngine;
+using RFNEet.realtimeDB;
+
 namespace RFNEet.firebase {
 
     public class PlayerMap : FireMap<ObjMap> {

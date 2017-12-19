@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using RFNEet.realtimeDB;
 
 namespace RFNEet.firebase {
     public abstract class FireMap<T> : Map<string, T> {

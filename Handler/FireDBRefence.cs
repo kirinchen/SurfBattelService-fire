@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStomp;
 using System.Threading.Tasks;
+using RFNEet.realtimeDB;
 
 namespace RFNEet.firebase {
     public class FireDBRefence : DBRefenece {
