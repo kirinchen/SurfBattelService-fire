@@ -57,9 +57,9 @@ namespace RFNEet.firebase {
 
         }
 
-        public Task postData() {
+        public void postData(Action<bool, object> cb = null) {
             _lastData = getCurrentData();
-            return node.post(_lastData);
+             node.post(_lastData, cb);
         }
 
         private void _onValueChnaged(RemoteData obj) {

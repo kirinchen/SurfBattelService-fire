@@ -19,10 +19,10 @@ namespace RFNEet.firebase {
 
         }
 
-        public DBRefenece createRootRef(string roomId) {
+        public DBRefenece createRootRef(MonoBehaviour mb,string roomId) {
             string root = FireConfig.getInstance().getRootNode();
             Debug.Log("root=" + root + " rid=" + roomId);
-            return new FireDBRefence(FirebaseDatabase.DefaultInstance.GetReference(root).Child(roomId));
+            return new FireDBRefence(mb, FirebaseDatabase.DefaultInstance.GetReference(root).Child(roomId));
         }
 
         public void init( Action<string> onFailInitializeFirebase, Action initializeFirebase) {

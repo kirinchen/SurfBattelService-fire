@@ -6,6 +6,7 @@ using System;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using RFNEet.realtimeDB;
+using surfm.tool;
 
 namespace RFNEet.firebase {
     public class FireRepo : MonoBehaviour {
@@ -31,24 +32,20 @@ namespace RFNEet.firebase {
         }
 
         public void notifyChangePost(Action cb = null) {
-            List<Task> ts = new List<Task>();
-            map.foreachNode(fn => {
-                ts.Add(fn.notifyChangePost());
+            CallbacksDone allDone = new CallbacksDone(0, b => {
+                if (b) {
+                    cb();
+                } else {
+                    throw new Exception("Not fetch doen");
+                }
             });
-            if (cb != null) {
-                StartCoroutine(waitAllNotifyDone(ts, cb));
-            }
+            map.foreachNode(fn => {
+                Action<bool> a = allDone.cutdown();
+                fn.notifyChangePost((b, o) => { a(b); });
+            });
         }
 
-        private IEnumerator waitAllNotifyDone(List<Task> ts, Action cb) {
-            foreach (Task task in ts) {
-                yield return new WaitUntil(() => task.IsCompleted);
-                if (task.IsFaulted) {
-                    throw task.Exception;
-                }
-            }
-            cb();
-        }
+
 
         internal FireNode get(string pid, string sid) {
             return map.getThanSet(pid, sid);

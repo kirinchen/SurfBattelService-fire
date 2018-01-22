@@ -34,33 +34,32 @@ namespace RFNEet.firebase {
 
         }
 
-        internal Task post(RemoteData o) {
+        internal void post(RemoteData o, Action<bool, object> cb=null) {
             o.pid = pid;
             o.oid = oid;
             o.sid = FirebaseManager.getMePid();
             string s = JsonConvert.SerializeObject(o);
-            return dataFire.SetRawJsonValueAsync(s);
+            dataFire.SetRawJsonValueAsync(s, cb);
         }
 
-        internal Task putField(string field, object o) {
+        internal void putField(string field, object o, Action<bool, object> cb = null) {
             if (o is string || o is int || o is float) {
                 dataFire.Child(field).SetValueAsync(o);
             } else {
                 string s = JsonConvert.SerializeObject(o);
                 dataFire.Child(field).SetRawJsonValueAsync(s);
             }
-            return dataFire.Child("sid").SetValueAsync(pid);
+             dataFire.Child("sid").SetValueAsync(pid, cb);
 
         }
 
-        internal Task notifyChangePost() {
+        internal void notifyChangePost(Action<bool, object> cb = null) {
             ChangePost rd = changePostFunc();
             if (rd.change == ChangeType.ALL) {
-                return post(rd.data);
+                 post(rd.data, cb);
             } else if (rd.change == ChangeType.FieldChange) {
-                return putField(rd.field, rd.fieldData);
+                 putField(rd.field, rd.fieldData, cb);
             }
-            return Task.Factory.StartNew<object>(() => { return null; });
         }
 
         public void removeMe() {

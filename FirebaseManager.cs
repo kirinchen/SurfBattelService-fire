@@ -63,7 +63,7 @@ namespace RFNEet.firebase {
             Debug.Log("InitializeFirebase");
             initer.createConnect();
             repo = gameObject.AddComponent<FireRepo>();
-            repo.initFire(initer.createRootRef(roomId), () => {
+            repo.initFire(initer.createRootRef(this,roomId), () => {
                 doneInited(true);
             });
 

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityStomp;
 using System.Threading.Tasks;
 using RFNEet.realtimeDB;
+using surfm.tool;
 
 namespace RFNEet.firebase {
     public class FireDBRefence : DBRefenece {
@@ -19,9 +20,11 @@ namespace RFNEet.firebase {
         private EventMap<ValueChangedEventArgs> valueEventMap;
         private EventMap<ChildChangedEventArgs> addEventMap;
         private EventMap<ChildChangedEventArgs> removeEventMap;
+        private MonoBehaviour context;
 
 
-        public FireDBRefence(DatabaseReference body) {
+        public FireDBRefence(MonoBehaviour c, DatabaseReference body) {
+            context = c;
             this.body = body;
             valueEventMap = new EventMap<ValueChangedEventArgs>(body, t => {
                 return t.Snapshot;
@@ -54,24 +57,39 @@ namespace RFNEet.firebase {
 
         public DBRefenece Child(string pid) {
             DatabaseReference dr = body.Child(pid);
-            return new FireDBRefence(dr);
+            return new FireDBRefence(context, dr);
         }
 
         public DBRefenece parent() {
             DatabaseReference d = body.Parent;
-            return new FireDBRefence(d);
+            return new FireDBRefence(context, d);
         }
 
-        public Task SetRawJsonValueAsync(string s) {
-            return body.SetRawJsonValueAsync(s);
+        public void SetRawJsonValueAsync(string s, Action<bool, object> cb = null) {
+            Task t = body.SetRawJsonValueAsync(s);
+            if (cb != null) {
+                context.StartCoroutine(setAsync(t, cb));
+            }
         }
 
         public void removeMe() {
             body.RemoveValueAsync();
         }
 
-        public Task SetValueAsync(object value) {
-            return body.SetValueAsync(value);
+        public void SetValueAsync(object value, Action<bool, object> cb = null) {
+            Task t = body.SetValueAsync(value);
+            if (cb != null) {
+                context.StartCoroutine(setAsync(t, cb));
+            }
+        }
+
+        public static IEnumerator setAsync(Task task, Action<bool, object> cb) {
+            yield return new WaitUntil(() => task.IsCompleted);
+            if (task.IsFaulted) {
+                cb(false, task.Exception);
+            } else {
+                cb(true, "");
+            }
         }
 
         public void addChildAdded(Action<DBResult> a) {
@@ -97,6 +115,8 @@ namespace RFNEet.firebase {
         public void removeChildRemoved(Action<DBResult> a) {
             removeEventMap.removeEvent(a);
         }
+
+
 
         public class EventMap<T> where T : EventArgs {
             private Dictionary<Action<DBResult>, EventHandler<T>> changeEventMap = new Dictionary<Action<DBResult>, EventHandler<T>>();

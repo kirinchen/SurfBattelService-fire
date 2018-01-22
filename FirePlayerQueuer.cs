@@ -30,14 +30,14 @@ namespace RFNEet.firebase {
             ceneter.setDataProvider(this);
         }
 
-        public void init(bool createData, Action a) {
+        public void init(bool createData, Action cb ) {
             FirebaseManager.getInstance().addInitedAction(b => {
                 init(KEY_PID, KEY_OID);
                 ceneter.addPlayer(meId);
                 if (createData) {
-                    UnityUtils.setAsync(this, postData(), a);
+                    postData((bb,o)=> { cb(); });
                 } else {
-                    node.initCallback.add(a);
+                    node.initCallback.add(cb);
                 }
                 node.dataFire.Child("intoMap").addChildRemoved(onPlayerLeave);
             });

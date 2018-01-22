@@ -10,7 +10,7 @@ namespace RFNEet.firebase {
 
         }
 
-        public DBRefenece createRootRef(string roomId) {
+        public DBRefenece createRootRef(MonoBehaviour mb,string roomId) {
             return new DBR();
         }
 
@@ -24,7 +24,7 @@ namespace RFNEet.firebase {
 
 
         public class DBR : DBRefenece {
-           
+
 
             public DBRefenece Child(string pid) {
                 return new DBR();
@@ -37,16 +37,20 @@ namespace RFNEet.firebase {
             public void removeMe() {
             }
 
-            public Task SetRawJsonValueAsync(string s) {
-                return Task.Factory.StartNew<object>(()=> { return null; });
+            public void SetRawJsonValueAsync(string s, Action<bool, object> cb = null) {
+                if (cb != null) {
+                    cb(true, "");
+                }
             }
 
             public DBRefenece parent() {
                 return new DBR();
             }
 
-            public Task SetValueAsync(object value) {
-                return Task.Factory.StartNew<object>(() => { return null; });
+            public void SetValueAsync(object value, Action<bool, object> cb = null) {
+                if (cb != null) {
+                    cb(true, "");
+                }
             }
 
             public void addChildAdded(Action<DBResult> a) {
